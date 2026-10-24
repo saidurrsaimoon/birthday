@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suhasini 🌸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,wght@0,300;0,600;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{--night:#120d28;--plum:#2b1744;--rose:#ee6a95;--blush:#ffc2d6;--gold:#f5cd82;--ivory:#fff5ee;--mist:#cfc1e6}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 50% 0%,#3b1f5c,var(--night) 65%) fixed;color:var(--ivory);font-family:'Fraunces',Georgia,serif;font-weight:300;line-height:1.8;overflow-x:hidden;min-height:100vh;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.script{font-family:'Great Vibes',cursive;font-weight:400}
+.hand{font-family:'Caveat',cursive;font-weight:500}
+section{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 22px}
+h2{font-family:'Fraunces',serif;font-weight:300;font-style:italic;font-size:clamp(1.8rem,6vw,2.7rem);color:var(--gold);margin-bottom:12px}
+.lead{color:var(--mist);max-width:480px;margin-bottom:34px}
+.btn{padding:13px 28px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--rose),#c8457a);color:#fff;font:600 1rem 'Fraunces',serif;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(238,106,149,.5)}
+.btn:focus-visible,.card:focus-visible,#cake:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+
+/* gate */
+#gate{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 30%,#40205f,#0c0820 75%);transition:opacity 1.2s,visibility 1.2s}
+#gate.gone{opacity:0;visibility:hidden}
+#gate h1{font-size:clamp(1.8rem,7vw,2.5rem);font-weight:300;font-style:italic}
+#gate p{color:var(--mist);max-width:340px}
+.lock{font-size:48px;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 0 16px var(--rose))}
+.pw{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pw input{width:240px;padding:13px 20px;border-radius:999px;border:1px solid rgba(245,205,130,.5);background:rgba(255,255,255,.07);color:var(--ivory);font:300 1rem 'Fraunces',serif;text-align:center;outline:none}
+.pw input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,205,130,.2)}
+#err{min-height:1.6em;color:#ffa3bf}
+.shake{animation:shake .45s}
+@keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+@keyframes bob{50%{transform:translateY(-9px)}}
+@keyframes fade{to{opacity:1}}
+
+main{display:none}main.show{display:block}
+
+/* hero */
+.hero .k{color:var(--gold);font-size:1.15rem;opacity:0;animation:fade 1.5s .3s forwards}
+.hero h1{font-size:clamp(4rem,19vw,9.5rem);line-height:1.1;text-shadow:0 0 32px rgba(238,106,149,.8),0 0 80px rgba(245,205,130,.35);opacity:0;animation:fade 2.2s .8s forwards}
+.hero .hb{font-style:italic;font-size:clamp(1.4rem,5vw,2rem);color:var(--blush);opacity:0;animation:fade 1.6s 2s forwards}
+.hero .late{max-width:540px;margin-top:22px;opacity:0;animation:fade 1.8s 3s forwards}
+.hint{position:absolute;bottom:28px;color:var(--gold);opacity:0;animation:fade 1.4s 4.2s forwards,bob 2.4s 4.2s infinite}
+
+/* delay ticket */
+.ticket{max-width:460px;width:100%;text-align:left;padding:26px 26px 22px;border-radius:20px;border:2px dashed rgba(245,205,130,.6);background:rgba(255,255,255,.05);transform:rotate(-1.2deg)}
+.ticket h3{font-size:1.2rem;color:var(--gold);margin-bottom:10px}
+.ticket p{display:flex;justify-content:space-between;gap:14px;border-bottom:1px dotted rgba(255,255,255,.2);padding:5px 0;font-size:.98rem}
+.ticket p span{color:var(--mist)}
+.ticket p b{font-weight:600;text-align:right}
+.ticket .stamp{margin-top:16px;text-align:center;color:var(--rose);font-size:1.6rem;transform:rotate(-4deg)}
+
+/* countdown + since */
+.cd{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.cd div{min-width:80px;padding:16px 10px;border-radius:18px;border:1px solid rgba(245,205,130,.35);background:rgba(255,255,255,.05)}
+.cd b{display:block;font-size:2rem;font-weight:600}
+.cd span{font-size:.85rem;color:var(--mist)}
+.small{margin:26px 0 12px;color:var(--mist)}
+
+/* timeline */
+.tl{position:relative;max-width:540px;width:100%;padding-left:36px;text-align:left}
+.tl::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--rose),var(--gold))}
+.ev{position:relative;margin-bottom:34px}
+.ev::before{content:"";position:absolute;left:-36px;top:9px;width:18px;height:18px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 5px rgba(238,106,149,.25),0 0 18px var(--rose)}
+.ev b{color:var(--gold);font-weight:600}
+
+/* flip cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;max-width:760px;width:100%}
+.card{height:190px;perspective:900px;cursor:pointer;background:none;border:0;color:inherit;font:inherit}
+.in{position:relative;width:100%;height:100%;transition:transform .7s;transform-style:preserve-3d}
+.card.flip .in{transform:rotateY(180deg)}
+.f,.b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;border-radius:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.f{background:linear-gradient(145deg,#ee6a95,#9a3d86);font-size:1.5rem}
+.b{background:rgba(255,245,238,.12);border:1px solid rgba(255,245,238,.25);transform:rotateY(180deg);font-size:1rem}
+
+/* report */
+.rep{max-width:520px;width:100%;text-align:left;display:grid;gap:18px}
+.rep label{display:flex;justify-content:space-between;font-size:.95rem;margin-bottom:5px}
+.rep label span{color:var(--gold)}
+.bar{height:11px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width 2s cubic-bezier(.2,.8,.2,1)}
+
+/* letter */
+.letter{max-width:620px;text-align:left;padding:38px 32px;border-radius:26px;background:linear-gradient(160deg,rgba(255,245,238,.11),rgba(255,245,238,.03));border:1px solid rgba(255,245,238,.18)}
+.letter p{margin-bottom:18px;font-size:1.1rem;opacity:.12;transform:translateY(8px);transition:opacity 1.3s,transform 1.3s}
+.letter p.on{opacity:1;transform:none}
+.letter .sig{text-align:right;color:var(--gold);font-size:1.8rem;margin:0}
+
+/* cake */
+#cake{position:relative;width:200px;height:200px;margin:10px auto 18px;cursor:pointer;background:none;border:0}
+.plate{position:absolute;bottom:0;left:0;right:0;height:14px;border-radius:50%;background:#e9dfee}
+.t1,.t2{position:absolute;left:50%;transform:translateX(-50%);border-radius:14px 14px 6px 6px}
+.t1{bottom:12px;width:170px;height:56px;background:linear-gradient(#ffb3cb,#ee6a95)}
+.t2{bottom:66px;width:120px;height:46px;background:linear-gradient(#fff,#ffd9e6)}
+.t1::after,.t2::after{content:"";position:absolute;top:0;left:0;right:0;height:12px;border-radius:14px 14px 40% 40%;background:#fff}
+.can{position:absolute;bottom:110px;left:50%;width:8px;height:34px;margin-left:-4px;border-radius:3px;background:repeating-linear-gradient(45deg,#f5cd82 0 6px,#fff 6px 12px)}
+.fl{position:absolute;bottom:142px;left:50%;width:14px;height:26px;margin-left:-7px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(#fff6c8,#ffae3d 60%,transparent);filter:drop-shadow(0 0 12px #ffb347);animation:flick .25s infinite alternate;transition:opacity .4s}
+#cake.out .fl{opacity:0}
+@keyframes flick{to{transform:scale(1.15,.92) rotate(3deg)}}
+.wishline{min-height:2.2em;color:var(--blush);font-size:1.15rem}
+
+/* finale */
+.fin{max-width:600px}
+.fin .big{font-size:clamp(1.7rem,6vw,2.6rem);font-style:italic;line-height:1.4;margin-bottom:22px}
+.fin p{color:var(--blush);margin-bottom:14px}
+footer{position:relative;z-index:2;text-align:center;padding:10px 20px 70px;color:var(--mist)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<div id="gate">
+  <div class="lock">🔒</div>
+  <h1>A little surprise is waiting</h1>
+  <p>To open it, type the special name I used to call you.</p>
+  <form class="pw" id="pwform" autocomplete="off">
+    <input id="pw" type="password" placeholder="Password" aria-label="Password">
+    <button class="btn" type="submit">Unlock</button>
+  </form>
+  <div id="err" role="alert"></div>
+</div>
+
+<main id="main">
+  <section class="hero">
+    <div class="k">16th October, a very special day</div>
+    <h1 class="script">Suhasini</h1>
+    <div class="hb">Happy Birthday 🎂</div>
+    <p class="late">I know I am a little late. But some wishes are too sincere to expire, so this one is for you, delivered with all my heart.</p>
+    <div class="hint">scroll down ↓</div>
+  </section>
+
+  <section>
+    <h2>Official Delivery Notice</h2>
+    <p class="lead">Regarding the delay of one (1) birthday wish.</p>
+    <div class="ticket">
+      <h3>📦 Parcel #SUHASINI-1610</h3>
+      <p><span>Contents</span><b>1 giant wish + infinite good vibes</b></p>
+      <p><span>Expected</span><b>16th October</b></p>
+      <p><span>Delivered</span><b>Late (my bad 🙈)</b></p>
+      <p><span>Reason for delay</span><b>Shy heart, slow courier</b></p>
+      <p><span>Refund</span><b>Not accepted, only smiles</b></p>
+      <div class="stamp hand">DELIVERED WITH LOVE ✔</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The Next Birthday Is Coming</h2>
+    <p class="lead">Counting down to your next 16th October. Please start preparing the cake.</p>
+    <div class="cd" id="cd"></div>
+    <p class="small" id="cdsub"></p>
+  </section>
+
+  <section>
+    <h2>Our Story, In Dates</h2>
+    <p class="lead">Some dates just refuse to leave your memory.</p>
+    <div class="tl">
+      <div class="ev"><b>10 November 2023</b><br>The day we first met. I didn’t know it yet, but life had just quietly opened a new chapter.</div>
+      <div class="ev"><b>11 June 2024</b><br>The day our journey officially began. A lot of laughs, a lot of memories, a lot of you.</div>
+      <div class="ev"><b>16 October</b><br>Your birthday. The day the world got a little brighter, because you arrived in it.</div>
+    </div>
+    <p class="small">Since the day we first met, it has been</p>
+    <div class="cd" id="since"></div>
+  </section>
+
+  <section>
+    <h2>Tap to open 💌</h2>
+    <p class="lead">Four little notes. Each one is true.</p>
+    <div class="cards">
+      <button class="card" aria-label="Open note one"><div class="in"><div class="f">💗</div><div class="b">Your smile could fix a bad day faster than any medicine.</div></div></button>
+      <button class="card" aria-label="Open note two"><div class="in"><div class="f">🌙</div><div class="b">You made ordinary evenings feel like the best part of my life.</div></div></button>
+      <button class="card" aria-label="Open note three"><div class="in"><div class="f">😂</div><div class="b">Even your angry face was cute. I never told you, because I wanted to survive.</div></div></button>
+      <button class="card" aria-label="Open note four"><div class="in"><div class="f">✨</div><div class="b">You taught me what it means to care deeply. Thank you for that.</div></div></button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Suhasini’s Official Report</h2>
+    <p class="lead">Scientifically measured by a very serious committee (me).</p>
+    <div class="rep">
+      <div><label>Cuteness level <span>1000%</span></label><div class="bar"><i data-w="100"></i></div></div>
+      <div><label>Smile that lights up a room <span>100%</span></label><div class="bar"><i data-w="100"></i></div></div>
+      <div><label>Kindness <span>98%</span></label><div class="bar"><i data-w="98"></i></div></div>
+      <div><label>Patience with my nonsense <span>Legendary</span></label><div class="bar"><i data-w="95"></i></div></div>
+      <div><label>Ability to ignore my texts when annoyed <span>Expert</span></label><div class="bar"><i data-w="90"></i></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A Letter For You</h2>
+    <div class="letter" id="letter">
+      <p>Dear Suhasini,</p>
+      <p>I couldn’t wish you on your birthday, and that has been sitting in my heart ever since. So I made you this little corner of the internet instead, because you deserve more than a quick message.</p>
+      <p>Thank you for every laugh, every silly fight, every quiet moment, and every memory. You were a beautiful chapter of my life, and nothing will ever change that.</p>
+      <p>Our journey together walked this far, and I have made peace with that. But I want you to know that I still wish you only the best. From the bottom of my heart, I want you to be happy, safe, and loved the way you deserve.</p>
+      <p>I hope you go on to do something truly big in life. Chase every dream you have, and don’t let anyone make them smaller. You are far stronger and more capable than you know.</p>
+      <p>Wherever life takes you, my prayers will always be with you. May you have peace in your heart, success in your hands, and a smile that never fades.</p>
+      <p>Happy Birthday, Suhasini. Be happy, always. 🌸</p>
+      <p class="sig script">With all my best wishes</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Make a Wish</h2>
+    <p class="lead">Tap the candle to blow it out. Close your eyes first.</p>
+    <button id="cake" aria-label="Blow out the candle">
+      <div class="fl"></div><div class="can"></div><div class="t2"></div><div class="t1"></div><div class="plate"></div>
+    </button>
+    <div class="wishline hand" id="wishline"></div>
+  </section>
+
+  <section>
+    <div class="fin">
+      <div class="big">May your dreams grow bigger than your fears, and your happiness louder than your doubts.</div>
+      <p>Go and build a life that makes you proud.</p>
+      <p>This is my little gift to you, and my sincere prayer for you.</p>
+      <button class="btn" id="boom" style="margin-top:20px">🎉 One last surprise</button>
+    </div>
+  </section>
+
+  <footer><span class="script" style="font-size:2rem;color:var(--gold)">Happy Birthday, Suhasini</span></footer>
+</main>
+
+<script>
+(function(){
+  var PASS='suhasini', BM=9, BD=16, MEET=new Date(2023,10,10);
+  var gate=document.getElementById('gate'), form=document.getElementById('pwform'),
+      input=document.getElementById('pw'), err=document.getElementById('err'), main=document.getElementById('main');
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(input.value.trim().toLowerCase()===PASS){
+      gate.classList.add('gone'); main.classList.add('show');
+      startFx(); tick(); setInterval(tick,1000); observe();
+      setTimeout(function(){burst(innerWidth/2,innerHeight/3,150)},900);
+    }else{
+      err.textContent='That is not the right password. Try again.';
+      form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake'); input.select();
+    }
+  });
+  input.focus();
+
+  function box(v,l){return '<div><b>'+v+'</b><span>'+l+'</span></div>';}
+  function nextBday(now){
+    var y=now.getFullYear(), t=new Date(y,BM,BD), end=new Date(y,BM,BD+1);
+    if(now>=t&&now<end) return {t:t,today:true};
+    if(now>=end) t=new Date(y+1,BM,BD);
+    return {t:t,today:false};
+  }
+  function tick(){
+    var now=new Date(), nb=nextBday(now), cd=document.getElementById('cd'), sub=document.getElementById('cdsub');
+    if(nb.today){cd.innerHTML='<div style="min-width:240px"><b>🎂</b><span>It is TODAY!</span></div>'; sub.textContent='Happy Birthday, Suhasini!';}
+    else{
+      var s=Math.floor((nb.t-now)/1000);
+      cd.innerHTML=box(Math.floor(s/86400),'days')+box(Math.floor(s%86400/3600),'hours')+box(Math.floor(s%3600/60),'minutes')+box(s%60,'seconds');
+      sub.textContent='Until 16th October '+nb.t.getFullYear()+' 🎈';
+    }
+    var d=Math.floor((now-MEET)/1000);
+    document.getElementById('since').innerHTML=box(Math.floor(d/86400),'days')+box(Math.floor(d%86400/3600),'hours')+box(Math.floor(d%3600/60),'minutes')+box(d%60,'seconds');
+  }
+
+  function observe(){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var el=e.target;
+      if(el.tagName==='P') el.classList.add('on');
+      if(el.classList.contains('bar')){var i=el.firstElementChild; i.style.width=i.dataset.w+'%';}
+      io.unobserve(el);
+    });},{threshold:.6});
+    document.querySelectorAll('#letter p,.bar').forEach(function(n){io.observe(n)});
+  }
+
+  document.querySelectorAll('.card').forEach(function(c){c.addEventListener('click',function(){c.classList.toggle('flip')})});
+
+  /* canvas: falling emojis + confetti */
+  var cv=document.getElementById('fx'), cx=cv.getContext('2d'), W,H, petals=[], bits=[], run=false;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+  addEventListener('resize',size); size();
+  var ic=['🌸','💗','✨','🌷','🦋','💫'];
+  function petal(){return{x:Math.random()*W,y:-30,s:12+Math.random()*16,v:.6+Math.random()*1.1,sw:Math.random()*6.28,i:ic[Math.floor(Math.random()*ic.length)],a:.35+Math.random()*.5}}
+  function burst(x,y,n){
+    var cols=['#ee6a95','#f5cd82','#fff5ee','#cfc1e6','#ffa3bf'];
+    for(var k=0;k<n;k++){var a=Math.random()*6.28,sp=3+Math.random()*7;
+      bits.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3,c:cols[k%5],w:5+Math.random()*5,h:3+Math.random()*4,r:Math.random()*6,l:120});}
+  }
+  function loop(){
+    cx.clearRect(0,0,W,H);
+    if(!reduce&&petals.length<28&&Math.random()<.06) petals.push(petal());
+    petals.forEach(function(p){p.y+=p.v;p.sw+=.02;p.x+=Math.sin(p.sw)*.7;cx.globalAlpha=p.a;cx.font=p.s+'px serif';cx.fillText(p.i,p.x,p.y)});
+    petals=petals.filter(function(p){return p.y<H+40});
+    bits.forEach(function(b){b.x+=b.vx;b.y+=b.vy;b.vy+=.18;b.vx*=.99;b.r+=.2;b.l--;
+      cx.save();cx.translate(b.x,b.y);cx.rotate(b.r);cx.globalAlpha=Math.max(b.l/120,0);cx.fillStyle=b.c;cx.fillRect(-b.w/2,-b.h/2,b.w,b.h);cx.restore()});
+    bits=bits.filter(function(b){return b.l>0});
+    cx.globalAlpha=1; requestAnimationFrame(loop);
+  }
+  function startFx(){if(!run){run=true;loop()}}
+
+  document.getElementById('cake').addEventListener('click',function(){
+    var c=this; if(c.classList.contains('out')) return;
+    c.classList.add('out');
+    var r=c.getBoundingClientRect(); burst(r.left+r.width/2,r.top,200);
+    document.getElementById('wishline').textContent='Wish made! I hope every single one comes true, Suhasini. 💖';
+  });
+  document.getElementById('boom').addEventListener('click',function(e){
+    var r=e.target.getBoundingClientRect(); burst(r.left+r.width/2,r.top,240);
+    setTimeout(function(){burst(innerWidth*.2,innerHeight*.4,140)},250);
+    setTimeout(function(){burst(innerWidth*.8,innerHeight*.4,140)},500);
+    e.target.textContent='💖 Happy Birthday, Suhasini!';
+  });
+})();
+</script>
+</body>
+</html>
